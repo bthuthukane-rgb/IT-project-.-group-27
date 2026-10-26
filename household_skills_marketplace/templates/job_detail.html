@@ -1,0 +1,15 @@
+{% extends "base.html" %}{% import '_m.html' as m with context %}{% block title %}{{ j.title }}{% endblock %}
+{% block content %}<div class="crumbs"><a href="{{ url_for('jobs') }}">Jobs</a> / {{ j.category }}</div>
+<div class="grid g2"><div class="card"><span class="pill">{{ j.category }}</span> {{ m.status(j.status) }}<h1 class="mt">{{ j.title }}</h1>
+<p class="pre">{{ j.description }}</p><p class="muted">Location: {{ j.location }}<br>Budget: {{ j.budget|money if j.budget else 'not stated' }}<br>Posted by {{ j.poster }} on {{ j.created_at|day }}</p></div>
+<div class="card">
+{% if not me %}<h2>Want this job?</h2><p>Log in as a skill provider to apply.</p><a class="btn chip" href="{{ url_for('login', next=url_for('job_apply', jid=j.id)) }}">Log in to apply</a> <a class="btn ghost" href="{{ url_for('register', role='provider') }}">Create provider account</a>
+{% elif me.role=='provider' %}{% if mine %}<h2>You applied</h2><p>Status: {{ m.status(mine.status) }}</p>{% elif j.status=='open' %}<h2>Interested?</h2><a class="btn chip" href="{{ url_for('job_apply', jid=j.id) }}">Apply for this job</a>{% else %}<p>This job is closed.</p>{% endif %}
+{% elif me.id==j.client_id or me.role=='admin' %}<h2>Share this job</h2>{{ m.copylink('sharelink','Public link',share) }}<div class="mt">{{ m.copylink('applylink','Direct link to the application form',apply_link) }}</div>
+<form class="mt" method="post" action="{{ url_for('job_manage', jid=j.id, action='close' if j.status=='open' else 'reopen') }}">{{ m.csrf() }}<button class="btn ghost" type="submit">{{ 'Close job' if j.status=='open' else 'Re-open job' }}</button></form>
+{% else %}<p class="muted">Only skill providers can apply.</p>{% endif %}</div></div>
+{% if me and (me.id==j.client_id or me.role=='admin') %}<h2 class="mt">Applicants ({{ apps|length }})</h2>
+{% for a in apps %}<div class="card mt"><div class="row between"><span><strong>{{ a.full_name }}</strong> {{ m.status(a.status) }}<br><span class="muted">{{ a.headline }}</span></span>
+<span class="row"><a class="btn sm ghost" href="{{ url_for('provider_detail', uid=a.provider_id) }}">Profile</a><a class="btn sm ghost" href="{{ url_for('thread', uid=a.provider_id) }}">Message</a>
+{% for act, lbl in (('shortlist','Shortlist'),('reject','Reject')) %}<form class="inline-form" method="post" action="{{ url_for('job_manage', jid=j.id, action=act) }}">{{ m.csrf() }}<input type="hidden" name="app_id" value="{{ a.id }}"><button class="btn sm {{ 'ghost' if act=='reject' }}" type="submit">{{ lbl }}</button></form>{% endfor %}</span></div>
+<p class="pre">{{ a.message }}</p></div>{% else %}<p class="muted">No applications yet. Share the link above to attract applicants.</p>{% endfor %}{% endif %}{% endblock %}

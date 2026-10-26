@@ -1,0 +1,17 @@
+{% extends "base.html" %}{% import '_m.html' as m with context %}{% block title %}Create your account{% endblock %}
+{% block content %}<div class="narrow card">
+<h1>Create your account</h1>
+<p class="muted">{% if role=='provider' %}Offer your household skills to clients near you.{% else %}Find and book trusted local help.{% endif %}
+ {% if role=='provider' %}<a href="{{ url_for('register', role='client') }}">I need work done instead</a>{% else %}<a href="{{ url_for('register', role='provider') }}">I offer a skill instead</a>{% endif %}</p>
+<form method="post">{{ m.csrf() }}<input type="hidden" name="role" value="{{ role }}">
+<div class="hp" aria-hidden="true"><label>Leave this empty<input name="website" tabindex="-1" autocomplete="off"></label></div>
+{{ m.field('full_name','Full name','text',form.get('full_name'),ac='name',maxlen=80) }}
+{{ m.field('email','E-mail address','email',form.get('email'),ac='email',maxlen=120,hint='We will send a confirmation link here.') }}
+{{ m.field('phone','Phone number','tel',form.get('phone'),required=False,ac='tel',maxlen=20,placeholder='e.g. 082 123 4567') }}
+{{ m.pwfield('password','Password') }}
+{{ m.pw_checklist() }}
+{{ m.pwfield('confirm','Confirm password') }}<div class="match" aria-live="polite"></div>
+<div class="f"><label class="row"><input type="checkbox" name="terms" required> <span>I accept the <a href="{{ url_for('terms') }}" target="_blank" rel="noopener">terms &amp; privacy notice</a></span></label></div>
+<button class="btn chip" type="submit">Create account</button>
+</form>
+<p class="mt small">Already registered? <a href="{{ url_for('login') }}">Log in</a></p></div>{% endblock %}

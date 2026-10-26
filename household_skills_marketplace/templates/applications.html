@@ -1,0 +1,5 @@
+{% extends "base.html" %}{% import '_m.html' as m with context %}{% block title %}My applications{% endblock %}
+{% block content %}<h1>My applications</h1>
+{% if rows %}<div class="tscroll"><table><thead><tr><th>Job</th><th>Category</th><th>Applied</th><th>Status</th></tr></thead><tbody>
+{% for a in rows %}<tr><td><a href="{{ url_for('job_detail', jid=a.job_id) }}">{{ a.title }}</a></td><td>{{ a.category }}</td><td>{{ a.created_at|day }}</td><td>{{ m.status(a.status) }}</td></tr>{% endfor %}</tbody></table></div>
+{% else %}<div class="card empty">You have not applied for any jobs yet. <a href="{{ url_for('jobs') }}">Browse open jobs</a>.</div>{% endif %}{% endblock %}

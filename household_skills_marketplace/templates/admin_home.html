@@ -1,0 +1,11 @@
+{% extends "base.html" %}{% import '_m.html' as m with context %}{% block title %}Admin analytics{% endblock %}
+{% block content %}<div class="row between"><h1>Analytics</h1><span class="row noprint"><a class="btn sm ghost" href="{{ url_for('analytics_csv') }}">Download CSV</a><a class="btn sm" href="{{ url_for('analytics_pdf') }}">Download PDF report</a></span></div>
+<p class="muted">Generated {{ a.generated }}</p>{% with active='home' %}{% include 'admin_nav.html' %}{% endwith %}
+<div class="grid g3 mt">{% for label, v in a.totals %}<div class="card"><div class="stat">{{ v }}</div><div>{{ label }}</div></div>{% endfor %}</div>
+<div class="grid g2 mt"><div class="card"><h3>Approved providers by category</h3>{% if a.by_category %}{{ m.bars(a.by_category) }}{% else %}<p class="muted">No data yet.</p>{% endif %}</div>
+<div class="card"><h3>Top locations</h3>{% if a.by_location %}{{ m.bars(a.by_location) }}{% else %}<p class="muted">No data yet.</p>{% endif %}</div>
+<div class="card"><h3>New users per month</h3>{{ m.bars(a.signups) }}</div><div class="card"><h3>Bookings per month</h3>{{ m.bars(a.bookings_monthly) }}</div>
+<div class="card"><h3>Bookings by status</h3>{% if a.booking_status %}{{ m.bars(a.booking_status) }}{% else %}<p class="muted">No bookings yet.</p>{% endif %}</div>
+<div class="card"><h3>E-mail activity</h3>{% if a.emails %}{{ m.bars(a.emails) }}{% else %}<p class="muted">No e-mail yet.</p>{% endif %}</div></div>
+<h2 class="mt">Recent activity</h2><div class="tscroll"><table><thead><tr><th>When</th><th>User</th><th>Action</th><th>Detail</th></tr></thead><tbody>
+{% for r in recent %}<tr><td>{{ r.created_at }}</td><td>{{ r.email or '-' }}</td><td>{{ r.action }}</td><td>{{ r.detail }}</td></tr>{% else %}<tr><td colspan="4" class="muted">Nothing yet.</td></tr>{% endfor %}</tbody></table></div>{% endblock %}

@@ -1,0 +1,11 @@
+{% extends "base.html" %}{% import '_m.html' as m with context %}{% block title %}Backups{% endblock %}
+{% block content %}<h1>System backups</h1>{% with active='bk' %}{% include 'admin_nav.html' %}{% endwith %}
+<div class="card mt row between"><span>Automatic backup every <strong>{{ interval|int if interval==interval|int else interval }} hours</strong>; the newest <strong>{{ keep }}</strong> are kept. Each backup is integrity-checked and checksummed.</span>
+<form method="post">{{ m.csrf() }}<input type="hidden" name="op" value="create"><button class="btn chip" type="submit">Back up now</button></form></div>
+<div class="tscroll mt"><table><thead><tr><th>File</th><th>Type</th><th>Created</th><th>Size</th><th></th></tr></thead><tbody>
+{% for b in backups %}<tr><td>{{ b.name }}</td><td>{{ b.kind }}</td><td>{{ b.created }}</td><td>{{ b.size_kb }} KB</td><td class="row">
+<a class="btn sm ghost" href="{{ url_for('backup_download', name=b.name) }}">Download</a>
+<form class="row" method="post" data-confirm="Restore the database from this backup? Current data will be replaced (a safety backup is made first).">{{ m.csrf() }}<input type="hidden" name="op" value="restore"><input type="hidden" name="name" value="{{ b.name }}"><input class="w-sm" name="confirm" placeholder="Type RESTORE" aria-label="Type RESTORE to confirm" required><button class="btn sm" type="submit">Restore</button></form>
+<form class="inline-form" method="post" data-confirm="Delete this backup file?">{{ m.csrf() }}<input type="hidden" name="op" value="delete"><input type="hidden" name="name" value="{{ b.name }}"><button class="btn sm danger" type="submit">Delete</button></form></td></tr>
+{% else %}<tr><td colspan="5" class="muted">No backups yet. Click "Back up now".</td></tr>{% endfor %}</tbody></table></div>
+<p class="muted small mt">Tip: copy the downloaded files to a different device or cloud drive so a disk failure cannot take your backups with it.</p>{% endblock %}

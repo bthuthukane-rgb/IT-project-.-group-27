@@ -1,0 +1,7 @@
+{% extends "base.html" %}{% block title %}Receipt {{ b.receipt_no }}{% endblock %}
+{% block content %}<div class="receipt"><h1>Service receipt</h1><p class="muted">Household Skills Marketplace</p>
+<table><tbody><tr><th>Receipt no.</th><td>{{ b.receipt_no }}</td></tr><tr><th>Issued</th><td>{{ b.completed_at|day }}</td></tr><tr><th>Client</th><td>{{ b.client_name }}</td></tr>
+<tr><th>Service provider</th><td>{{ b.provider_name }}</td></tr><tr><th>Category</th><td>{{ b.category or '-' }}</td></tr><tr><th>Service date</th><td>{{ b.service_date }}</td></tr><tr><th>Booking ref</th><td>#{{ b.id }}</td></tr></tbody></table>
+<h3 class="mt">Work carried out</h3><p class="pre">{{ b.description }}</p><div class="tot"><span>Total agreed</span><span>{{ b.final_amount|money }}</span></div>
+<p class="muted small mt">Payment is arranged directly between client and provider. The platform does not process payments (version 1).</p></div>
+<p class="row mt noprint"><a class="btn" href="{{ url_for('receipt_pdf', bid=b.id) }}">Download PDF</a><button class="btn ghost" type="button" data-print>Print</button><a class="btn ghost" href="{{ url_for('bookings') }}">Back to bookings</a></p>{% endblock %}

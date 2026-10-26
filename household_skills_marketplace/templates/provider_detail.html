@@ -1,0 +1,16 @@
+{% extends "base.html" %}{% import '_m.html' as m with context %}{% block title %}{{ p.full_name }} - {{ p.category }}{% endblock %}
+{% block content %}<div class="crumbs"><a href="{{ url_for('providers') }}">Providers</a> / {{ p.category }}</div>
+{% if p.status != 'approved' %}<div class="flash info">This profile is <strong>{{ p.status }}</strong> and not visible to the public.</div>{% endif %}
+<div class="grid g2"><div class="card"><span class="pill">{{ p.category }}</span><h1 class="mt">{{ p.full_name }}</h1><h3>{{ p.headline }}</h3>
+<p class="pre">{{ p.bio }}</p><p class="muted">Location: {{ p.location }}{% if p.hourly_rate %}<br>Rate: {{ p.hourly_rate|money }} per hour{% endif %}{% if p.availability %}<br>Available: {{ p.availability }}{% endif %}</p></div>
+<div class="card" id="book">
+{% if not me %}<h2>Interested?</h2><p>Log in or create a free client account to message or book {{ p.full_name.split()[0] }}.</p>
+<a class="btn chip" href="{{ url_for('login', next=url_for('provider_detail', uid=p.id)) }}">Log in</a> <a class="btn ghost" href="{{ url_for('register', role='client') }}">Sign up</a>
+{% elif me.role=='client' and p.status=='approved' %}<h2>Book {{ p.full_name.split()[0] }}</h2>
+<form method="post" action="{{ url_for('book', uid=p.id) }}">{{ m.csrf() }}
+<div class="f"><label for="service_date">Preferred date</label><input id="service_date" type="date" name="service_date" min="{{ today }}" required></div>
+<div class="f"><label for="description">What needs doing?</label><textarea id="description" name="description" required minlength="10" maxlength="1000"></textarea></div>
+{{ m.field('quoted_amount','Your budget (R)','number',required=False) }}<button class="btn chip" type="submit">Send booking request</button></form>
+<p class="mt"><a class="btn ghost" href="{{ url_for('thread', uid=p.id) }}">Or send a message first</a></p>
+{% elif me.id==p.id %}<p>This is how clients see your page.</p><a class="btn" href="{{ url_for('profile_edit') }}">Edit profile</a>
+{% else %}<p class="muted">Only client accounts can book providers.</p>{% endif %}</div></div>{% endblock %}

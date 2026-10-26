@@ -1,0 +1,8 @@
+{% extends "base.html" %}{% import '_m.html' as m with context %}{% block title %}Log in{% endblock %}
+{% block content %}<div class="narrow card"><h1>Log in</h1>
+<form method="post">{{ m.csrf() }}{% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+{{ m.field('email','E-mail address','email',ac='username',maxlen=120) }}
+{{ m.pwfield('password','Password','current-password') }}
+<button class="btn chip" type="submit">Log in</button></form>
+<p class="mt small"><a href="{{ url_for('forgot') }}">Forgot your password?</a> &middot; <a href="{{ url_for('resend_verification') }}">Resend confirmation link</a></p>
+<p class="small">New here? <a href="{{ url_for('register', role='provider') }}">Offer a skill</a> or <a href="{{ url_for('register', role='client') }}">find help</a>.</p></div>{% endblock %}

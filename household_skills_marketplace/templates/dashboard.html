@@ -1,0 +1,19 @@
+{% extends "base.html" %}{% import '_m.html' as m with context %}{% block title %}Dashboard{% endblock %}
+{% block content %}<h1>Hello, {{ me.full_name.split()[0] }}</h1>
+{% if me.role=='provider' %}
+ {% if not d.profile %}<div class="card"><h2>Create your profile</h2><p>It takes under 5 minutes. Clients can find you once an administrator approves it.</p><a class="btn chip" href="{{ url_for('profile_edit') }}">Create my profile</a></div>
+ {% else %}<div class="grid g3">
+  <div class="card"><div class="stat">{{ m.status(d.profile.status) }}</div><div class="mt">Profile status{% if d.profile.mod_note %}<br><span class="small">Note: {{ d.profile.mod_note }}</span>{% endif %}</div><p><a href="{{ url_for('profile_edit') }}">Edit profile</a> &middot; <a href="{{ url_for('provider_detail', uid=me.id) }}">View public page</a></p></div>
+  <div class="card"><div class="stat">{{ d.bookings }}</div><div>Open bookings</div><p><a href="{{ url_for('bookings') }}">Manage bookings</a></p></div>
+  <div class="card"><div class="stat">{{ d.applications }}</div><div>Job applications sent</div><p><a href="{{ url_for('my_applications') }}">View applications</a></p></div></div>
+  <h2 class="mt">Jobs matching {{ d.profile.category }}</h2>
+  {% for j in d.matching_jobs %}<a class="card plain row between mt" href="{{ url_for('job_detail', jid=j.id) }}"><span><strong>{{ j.title }}</strong><br><span class="muted">{{ j.location }}</span></span><span class="btn sm ghost">View &amp; apply</span></a>
+  {% else %}<p class="muted">No open jobs in your category right now. We e-mail you when one is posted.</p>{% endfor %}
+ {% endif %}
+{% else %}
+ <div class="grid g3"><div class="card"><div class="stat">{{ d.bookings }}</div><div>Open bookings</div><p><a href="{{ url_for('bookings') }}">View bookings</a></p></div>
+ <div class="card"><h3>Need something done?</h3><a class="btn chip" href="{{ url_for('providers') }}">Find a provider</a></div>
+ <div class="card"><h3>Want applicants?</h3><a class="btn" href="{{ url_for('job_new') }}">Post a job</a></div></div>
+ <h2 class="mt">Your job posts</h2>
+ {% for j in d.jobs %}<a class="card plain row between mt" href="{{ url_for('job_detail', jid=j.id) }}"><span><strong>{{ j.title }}</strong> {{ m.status(j.status) }}</span><span>{{ j.apps }} applicant{{ '' if j.apps==1 else 's' }}</span></a>{% else %}<p class="muted">You have not posted any jobs yet.</p>{% endfor %}
+{% endif %}{% endblock %}

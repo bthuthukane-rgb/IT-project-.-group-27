@@ -1,0 +1,4 @@
+{% extends "base.html" %}{% block title %}Messages{% endblock %}
+{% block content %}<h1>Messages</h1>
+{% for r in rows %}<a class="card plain row between mt" href="{{ url_for('thread', uid=r.id) }}"><span><strong>{{ r.full_name }}</strong> {% if r.unread %}<span class="badge">{{ r.unread }} new</span>{% endif %}<br><span class="muted">{{ r.body[:90] }}</span></span><span class="muted small">{{ r.created_at[:16] }}</span></a>
+{% else %}<div class="card empty">No conversations yet. {% if me.role=='client' %}<a href="{{ url_for('providers') }}">Find a provider</a> to start one.{% else %}Clients will message you once your profile is approved.{% endif %}</div>{% endfor %}{% endblock %}

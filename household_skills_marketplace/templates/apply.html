@@ -1,0 +1,5 @@
+{% extends "base.html" %}{% import '_m.html' as m with context %}{% block title %}Apply: {{ j.title }}{% endblock %}
+{% block content %}<div class="mid card"><div class="crumbs"><a href="{{ url_for('job_detail', jid=j.id) }}">&laquo; Back to job</a></div><h1>Apply: {{ j.title }}</h1>
+<p class="muted">{{ j.category }} &middot; {{ j.location }}. Your profile is shared with {{ j.poster }}, and you will get a confirmation e-mail.</p>
+<form method="post">{{ m.csrf() }}<div class="f"><label for="message">Why are you a good fit?</label><textarea id="message" name="message" required minlength="20" maxlength="1500">{{ msg }}</textarea></div>
+<button class="btn chip" type="submit">Send application</button></form></div>{% endblock %}

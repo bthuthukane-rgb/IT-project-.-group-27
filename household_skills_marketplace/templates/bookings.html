@@ -1,0 +1,15 @@
+{% extends "base.html" %}{% import '_m.html' as m with context %}{% block title %}Bookings{% endblock %}
+{% block content %}<h1>Bookings</h1>
+{% if rows %}<div class="tscroll"><table><thead><tr><th>Ref</th><th>{{ 'Provider' if me.role=='client' else 'Client' }}</th><th>Date</th><th>Work</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead><tbody>
+{% for b in rows %}<tr><td>#{{ b.id }}</td><td>{{ b.provider_name if me.role=='client' else b.client_name }}</td><td>{{ b.service_date }}</td><td>{{ b.description[:80] }}</td>
+<td>{{ (b.final_amount if b.final_amount is not none else b.quoted_amount)|money }}</td><td>{{ m.status(b.status) }}</td><td>
+{% if me.role=='provider' and b.status=='requested' %}
+ <form class="inline-form" method="post" action="{{ url_for('booking_action', bid=b.id, action='accept') }}">{{ m.csrf() }}<button class="btn sm" type="submit">Accept</button></form>
+ <form class="inline-form" method="post" action="{{ url_for('booking_action', bid=b.id, action='decline') }}" data-confirm="Decline this booking?">{{ m.csrf() }}<button class="btn sm ghost" type="submit">Decline</button></form>
+{% elif me.role=='provider' and b.status=='accepted' %}
+ <form method="post" action="{{ url_for('booking_action', bid=b.id, action='complete') }}">{{ m.csrf() }}<label class="small" for="fa{{ b.id }}">Final amount (R)</label><input id="fa{{ b.id }}" class="w-sm" name="final_amount" type="number" min="0" step="0.01" required value="{{ b.quoted_amount or '' }}"> <button class="btn sm chip" type="submit">Complete &amp; issue receipt</button></form>
+{% elif me.role=='client' and b.status in ('requested','accepted') %}
+ <form method="post" action="{{ url_for('booking_action', bid=b.id, action='cancel') }}" data-confirm="Cancel this booking?">{{ m.csrf() }}<button class="btn sm ghost" type="submit">Cancel</button></form>
+{% elif b.status=='completed' %}<a href="{{ url_for('receipt', bid=b.id) }}">Receipt</a> &middot; <a href="{{ url_for('receipt_pdf', bid=b.id) }}">PDF</a>{% endif %}
+</td></tr>{% endfor %}</tbody></table></div>
+{% else %}<div class="card empty">No bookings yet. {% if me.role=='client' %}<a href="{{ url_for('providers') }}">Find a provider</a> to make your first booking.{% endif %}</div>{% endif %}{% endblock %}

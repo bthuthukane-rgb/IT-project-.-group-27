@@ -1,0 +1,13 @@
+{% extends "base.html" %}{% import '_m.html' as m with context %}{% block title %}E-mail centre{% endblock %}
+{% block content %}<h1>E-mail centre</h1>{% with active='mail' %}{% include 'admin_nav.html' %}{% endwith %}
+{% if not smtp %}<div class="flash info mt">Development mode: <code>SMTP_HOST</code> is not set, so outgoing mail is logged below instead of delivered. See README to connect a mail server.</div>{% endif %}
+<div class="grid g2 mt"><div class="card"><h2>Send e-mail</h2><form method="post">{{ m.csrf() }}<input type="hidden" name="op" value="send"><input type="hidden" name="tab" value="out">
+<div class="f"><label for="audience">Send to</label><select id="audience" name="audience"><option value="providers">All verified providers (job seekers)</option><option value="clients">All verified clients</option>{% for c in categories %}<option value="cat:{{ c }}">Providers: {{ c }}</option>{% endfor %}<option value="one">One address...</option></select></div>
+{{ m.field('to','Address (only for "One address")','email',required=False,maxlen=120) }}{{ m.field('subject','Subject','text',maxlen=150) }}
+<div class="f"><label for="body">Message</label><textarea id="body" name="body" required minlength="5" maxlength="5000"></textarea></div><button class="btn chip" type="submit">Send</button></form></div>
+<div class="card"><h2>Incoming mail</h2><p class="muted">Messages from the contact form and from your IMAP inbox ({{ 'connected' if imap else 'not configured' }}).</p>
+<form method="post">{{ m.csrf() }}<input type="hidden" name="op" value="fetch"><input type="hidden" name="tab" value="in"><button class="btn" type="submit">Check inbox now</button></form></div></div>
+<div class="row mt"><a class="btn sm {{ '' if tab=='out' else 'ghost' }}" href="{{ url_for('admin_emails', tab='out') }}">Sent</a><a class="btn sm {{ '' if tab=='in' else 'ghost' }}" href="{{ url_for('admin_emails', tab='in') }}">Received</a></div>
+<div class="tscroll mt"><table><thead><tr><th>When</th><th>{{ 'To' if tab=='out' else 'From' }}</th><th>Subject</th><th>Status</th></tr></thead><tbody>
+{% for e in rows %}<tr><td>{{ e.created_at }}</td><td>{{ e.to_addr if tab=='out' else e.from_addr }}</td><td><details><summary>{{ e.subject }}</summary><p class="pre small">{{ e.body }}</p>{% if e.error %}<p class="small">Error: {{ e.error }}</p>{% endif %}</details></td><td>{{ m.status(e.status) }}</td></tr>
+{% else %}<tr><td colspan="4" class="muted">No messages.</td></tr>{% endfor %}</tbody></table></div>{{ m.pager(pg, 'admin_emails', tab=tab) }}{% endblock %}

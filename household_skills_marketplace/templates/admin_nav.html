@@ -1,0 +1,5 @@
+<nav class="row mt noprint" aria-label="Admin"><a class="btn sm {{ '' if active=='home' else 'ghost' }}" href="{{ url_for('admin_home') }}">Analytics</a>
+<a class="btn sm {{ '' if active=='mod' else 'ghost' }}" href="{{ url_for('admin_moderation') }}">Moderation</a>
+<a class="btn sm {{ '' if active=='users' else 'ghost' }}" href="{{ url_for('admin_users') }}">Users</a>
+<a class="btn sm {{ '' if active=='mail' else 'ghost' }}" href="{{ url_for('admin_emails') }}">E-mail centre</a>
+<a class="btn sm {{ '' if active=='bk' else 'ghost' }}" href="{{ url_for('admin_backups') }}">Backups</a></nav>

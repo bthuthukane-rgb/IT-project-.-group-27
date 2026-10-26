@@ -1,0 +1,15 @@
+{% extends "base.html" %}{% import '_m.html' as m with context %}{% block title %}My account{% endblock %}
+{% block content %}<h1>My account</h1><div class="grid g2">
+<div class="card"><h2>Your details</h2><form method="post" action="{{ url_for('account_details') }}">{{ m.csrf() }}
+{{ m.field('full_name','Full name','text',me.full_name,maxlen=80) }}{{ m.field('phone','Phone','tel',me.phone,required=False,maxlen=20) }}
+<p class="muted small">E-mail: <strong>{{ me.email }}</strong> &middot; Role: {{ me.role }}</p><button class="btn" type="submit">Save details</button></form></div>
+<div class="card"><h2>Change e-mail</h2><p class="muted small">A code is sent to the new address to prove it is yours.</p>
+<form method="post" action="{{ url_for('account_email') }}">{{ m.csrf() }}{{ m.field('email','New e-mail address','email',maxlen=120) }}
+{{ m.pwfield('current','Current password','current-password') }}<button class="btn" type="submit">Send verification code</button></form></div>
+<div class="card"><h2>Change password</h2><p class="muted small">You will confirm the change with a code sent to {{ me.email }}.</p>
+<form method="post" action="{{ url_for('account_password') }}">{{ m.csrf() }}{{ m.pwfield('current','Current password','current-password') }}
+{{ m.pwfield('password','New password') }}{{ m.pw_checklist(me.email, me.full_name) }}{{ m.pwfield('confirm','Confirm new password') }}<div class="match" aria-live="polite"></div>
+<button class="btn" type="submit">Send verification code</button></form></div>
+<div class="card"><h2>Password requirements</h2><p class="muted small">Every password on this site must tick all of these:</p>
+<ul>{% for id, label in pw_labels %}<li>{{ label }}</li>{% endfor %}</ul>
+<p class="muted small">Tip: a few unrelated words plus a number and symbol makes a strong, memorable password.</p></div></div>{% endblock %}

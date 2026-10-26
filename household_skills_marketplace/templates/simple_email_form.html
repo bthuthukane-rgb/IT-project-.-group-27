@@ -1,0 +1,4 @@
+{% extends "base.html" %}{% import '_m.html' as m with context %}{% block title %}{{ title }}{% endblock %}
+{% block content %}<div class="narrow card"><h1>{{ title }}</h1>
+<form method="post" action="{{ action }}">{{ m.csrf() }}{{ m.field('email','E-mail address','email',ac='email',maxlen=120) }}
+<button class="btn chip" type="submit">{{ button }}</button></form><p class="small mt"><a href="{{ url_for('login') }}">Back to log in</a></p></div>{% endblock %}

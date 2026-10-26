@@ -1,0 +1,28 @@
+{% extends "base.html" %}{% import '_m.html' as m with context %}
+{% block content %}
+<section class="hero">
+ <div>
+  <h1>Good people with practical skills, one message away.</h1>
+  <p class="lead">Painters, cleaners, gardeners and handy neighbours advertise their work here. Search by skill and suburb, message them directly and arrange the job.</p>
+  <form class="searchbar" action="{{ url_for('providers') }}" method="get" role="search">
+   <div><label class="small" for="category">What do you need done?</label>
+    <select id="category" name="category"><option value="">Any skill</option>{% for c in categories %}<option>{{ c }}</option>{% endfor %}</select></div>
+   <div><label class="small" for="location">Where?</label><input id="location" name="location" placeholder="Suburb or town" maxlength="60"></div>
+   <button class="btn chip" type="submit" >Search</button>
+  </form>
+ </div>
+ <div class="stack" aria-label="How it works">
+  <div class="step"><div><strong>Offer your skills</strong><br><span class="muted">Create a profile in under 5 minutes.</span></div></div>
+  <div class="step"><div><strong>Clients find you</strong><br><span class="muted">Filter by skill and location, then message.</span></div></div>
+  <div class="step"><div><strong>Agree the job</strong><br><span class="muted">Book through the platform and get a receipt.</span></div></div>
+ </div>
+</section>
+<section aria-labelledby="cats"><h2 id="cats">Browse by skill</h2>
+ <div class="swatches">{% for c in categories %}<a class="swatch" href="{{ url_for('providers', category=c) }}"><div class="band c{{ loop.index0 }}">{{ c }}</div>
+  <div class="meta">{{ counts.get(c, 0) }} provider{{ '' if counts.get(c,0)==1 else 's' }}</div></a>{% endfor %}</div></section>
+{% if jobs %}<section class="mt"><h2>Latest jobs</h2><div class="grid g3">
+ {% for j in jobs %}<a class="card plain" href="{{ url_for('job_detail', jid=j.id) }}"><span class="pill">{{ j.category }}</span><h3 class="mt">{{ j.title }}</h3><span class="muted">{{ j.location }}</span></a>{% endfor %}
+</div></section>{% endif %}
+{% if not me %}<section class="card mt row between"><div><h2>Ready to start?</h2><span class="muted">Free to join. Providers create a profile; clients search and message.</span></div>
+ <div class="row"><a class="btn chip" href="{{ url_for('register', role='provider') }}">I offer a skill</a><a class="btn ghost" href="{{ url_for('register', role='client') }}">I need work done</a></div></section>{% endif %}
+{% endblock %}

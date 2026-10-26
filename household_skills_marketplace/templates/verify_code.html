@@ -1,0 +1,9 @@
+{% extends "base.html" %}{% import '_m.html' as m with context %}{% block title %}Verify it's you{% endblock %}
+{% block content %}<div class="narrow card"><h1>Check your e-mail</h1>
+<p>For your security we sent a 6-digit code to confirm
+{% if purpose=='login' %}this login from a new browser or device.{% elif purpose=='email_change' %}your new e-mail address.{% else %}your password change.{% endif %}
+The code is valid for 10 minutes.</p>
+<form method="post">{{ m.csrf() }}<div class="f"><label for="code">6-digit code</label>
+<input id="code" name="code" required inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" data-code></div>
+<button class="btn chip" type="submit">Verify</button></form>
+<form class="mt" method="post" action="{{ url_for('resend_code') }}">{{ m.csrf() }}<button class="btn ghost sm" type="submit">Send a new code</button></form></div>{% endblock %}

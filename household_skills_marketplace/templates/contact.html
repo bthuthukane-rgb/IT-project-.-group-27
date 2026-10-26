@@ -1,0 +1,6 @@
+{% extends "base.html" %}{% import '_m.html' as m with context %}{% block title %}Contact us{% endblock %}
+{% block content %}<div class="narrow card"><h1>Contact us</h1><p class="muted">Questions or feedback? We reply by e-mail.</p>
+<form method="post">{{ m.csrf() }}<div class="hp" aria-hidden="true"><label>Leave empty<input name="website" tabindex="-1" autocomplete="off"></label></div>
+{{ m.field('name','Your name','text',form.get('name') or (me and me.full_name),maxlen=80) }}{{ m.field('email','Your e-mail','email',form.get('email') or (me and me.email),maxlen=120) }}
+<div class="f"><label for="message">Message</label><textarea id="message" name="message" required minlength="10" maxlength="2000">{{ form.get('message','') }}</textarea></div>
+<button class="btn chip" type="submit">Send message</button></form></div>{% endblock %}

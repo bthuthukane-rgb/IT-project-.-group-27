@@ -1,0 +1,5 @@
+{% extends "base.html" %}{% import '_m.html' as m with context %}{% block title %}Chat with {{ other.full_name }}{% endblock %}
+{% block content %}<div class="mid"><div class="crumbs"><a href="{{ url_for('inbox') }}">Messages</a> / {{ other.full_name }}</div><h1>{{ other.full_name }}</h1>
+<div class="msgs">{% for x in msgs %}<div class="bubble {{ 'mine' if x.sender_id==me.id }}">{{ x.body }}<small>{{ x.created_at[:16] }}</small></div>
+{% else %}<p class="muted">No messages yet - say hello and describe what you need.</p>{% endfor %}<span id="end"></span></div>
+<form class="card" method="post">{{ m.csrf() }}<div class="f"><label for="body">Your message</label><textarea id="body" name="body" required maxlength="2000"></textarea></div><button class="btn chip" type="submit">Send</button></form></div>{% endblock %}

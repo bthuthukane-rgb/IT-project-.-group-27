@@ -1,0 +1,12 @@
+{% extends "base.html" %}{% import '_m.html' as m with context %}{% block title %}Find a provider{% endblock %}
+{% block content %}<h1>Find a provider</h1>
+<form class="searchbar" method="get" role="search">
+<div><label class="small" for="category">Skill</label><select id="category" name="category"><option value="">Any skill</option>{% for c in categories %}<option {{ 'selected' if c==cat }}>{{ c }}</option>{% endfor %}</select></div>
+<div><label class="small" for="location">Location</label><input id="location" name="location" value="{{ loc }}" maxlength="60" placeholder="Suburb or town"></div>
+<button class="btn chip" type="submit">Search</button></form>
+<p class="muted mt">{{ pg.total }} provider{{ '' if pg.total==1 else 's' }} found{% if cat or loc or term %} &middot; <a href="{{ url_for('providers') }}">clear filters</a>{% endif %}</p>
+<div class="grid g3">{% for r in rows %}<a class="card plain" href="{{ url_for('provider_detail', uid=r.id) }}">
+<span class="pill">{{ r.category }}</span><h3 class="mt">{{ r.full_name }}</h3><p>{{ r.headline }}</p>
+<p class="muted small">{{ r.location }}{% if r.hourly_rate %} &middot; {{ r.hourly_rate|money }}/hr{% endif %}</p></a>
+{% else %}<div class="card empty span-all">No providers match yet. Try another skill or a wider location, or <a href="{{ url_for('jobs') }}">browse jobs</a>.</div>{% endfor %}</div>
+{{ m.pager(pg, 'providers', category=cat, location=loc, q=term) }}{% endblock %}

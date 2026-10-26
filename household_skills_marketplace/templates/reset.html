@@ -1,0 +1,5 @@
+{% extends "base.html" %}{% import '_m.html' as m with context %}{% block title %}Choose a new password{% endblock %}
+{% block content %}<div class="narrow card"><h1>Choose a new password</h1>
+<form method="post">{{ m.csrf() }}<input type="hidden" name="email" value="{{ email }}">
+{{ m.pwfield('password','New password') }}{{ m.pw_checklist(email, name) }}{{ m.pwfield('confirm','Confirm new password') }}<div class="match" aria-live="polite"></div>
+<button class="btn chip" type="submit">Save new password</button></form></div>{% endblock %}

@@ -1,0 +1,12 @@
+{% extends "base.html" %}{% import '_m.html' as m with context %}{% block title %}My provider profile{% endblock %}
+{% block content %}<div class="mid card"><h1>{{ 'Edit' if p.get('headline') else 'Create' }} your profile</h1>
+<p class="muted">Five quick fields. Clients see this on your public page.</p>
+<form method="post">{{ m.csrf() }}
+<div class="f"><label for="category">Main skill</label><select id="category" name="category" required><option value="">Choose...</option>
+{% for c in categories %}<option {{ 'selected' if p.get('category')==c }}>{{ c }}</option>{% endfor %}</select></div>
+{{ m.field('headline','Headline','text',p.get('headline'),maxlen=100,hint='e.g. "Neat interior painter, 8 years experience"') }}
+<div class="f"><label for="bio">About you and your work</label><textarea id="bio" name="bio" required minlength="30" maxlength="1500">{{ p.get('bio','') }}</textarea></div>
+{{ m.field('location','Suburb / town','text',p.get('location'),maxlen=80) }}
+{{ m.field('hourly_rate','Hourly rate (R)','number',p.get('hourly_rate'),required=False) }}
+{{ m.field('availability','Availability','text',p.get('availability'),required=False,maxlen=100,hint='e.g. Weekdays, Saturdays') }}
+<button class="btn chip" type="submit">Save profile</button> <a class="btn ghost" href="{{ url_for('dashboard') }}">Cancel</a></form></div>{% endblock %}

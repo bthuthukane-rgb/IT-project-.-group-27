@@ -1,0 +1,8 @@
+{% extends "base.html" %}{% import '_m.html' as m with context %}{% block title %}Profile moderation{% endblock %}
+{% block content %}<h1>Profile moderation</h1>{% with active='mod' %}{% include 'admin_nav.html' %}{% endwith %}
+<div class="row mt">{% for s in ('pending','approved','rejected','suspended') %}<a class="btn sm {{ '' if s==st else 'ghost' }}" href="{{ url_for('admin_moderation', status=s) }}">{{ s|capitalize }}</a>{% endfor %}</div>
+{% for p in rows %}<div class="card mt"><div class="row between"><span><strong>{{ p.full_name }}</strong> <span class="muted">{{ p.email }}</span><br><span class="pill">{{ p.category }}</span> {{ p.location }}</span><a href="{{ url_for('provider_detail', uid=p.id) }}">Open page</a></div>
+<p><strong>{{ p.headline }}</strong></p><p class="pre">{{ p.bio }}</p>
+<form method="post" action="{{ url_for('admin_moderate', uid=p.id) }}" class="row">{{ m.csrf() }}<input type="hidden" name="back" value="{{ st }}"><input name="note" placeholder="Optional note to the provider" maxlength="300" aria-label="Note">
+{% for act, target, lbl, cls in (('approve','approved','Approve',''),('reject','rejected','Reject','ghost'),('suspend','suspended','Suspend','danger')) %}{% if p.status != target %}<button class="btn sm {{ cls }}" name="action" value="{{ act }}" type="submit">{{ lbl }}</button>{% endif %}{% endfor %}</form></div>
+{% else %}<div class="card empty mt">Nothing in this list.</div>{% endfor %}{% endblock %}

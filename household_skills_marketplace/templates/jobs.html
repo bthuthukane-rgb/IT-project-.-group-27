@@ -1,0 +1,7 @@
+{% extends "base.html" %}{% import '_m.html' as m with context %}{% block title %}Jobs{% endblock %}
+{% block content %}<div class="row between"><h1>Open jobs</h1>{% if me and me.role=='client' %}<a class="btn chip" href="{{ url_for('job_new') }}">Post a job</a>{% endif %}</div>
+<form class="searchbar mt" method="get"><div><label class="small" for="category">Skill</label><select id="category" name="category"><option value="">All skills</option>{% for c in categories %}<option {{ 'selected' if c==cat }}>{{ c }}</option>{% endfor %}</select></div><span></span><button class="btn" type="submit">Filter</button></form>
+<div class="grid g2 mt">{% for j in rows %}<a class="card plain" href="{{ url_for('job_detail', jid=j.id) }}"><span class="pill">{{ j.category }}</span><h3 class="mt">{{ j.title }}</h3>
+<p class="muted">{{ j.location }} &middot; {{ j.budget|money if j.budget else 'Budget not stated' }} &middot; {{ j.apps }} applicant{{ '' if j.apps==1 else 's' }}</p></a>
+{% else %}<div class="card empty span-all">No open jobs in this category right now. Check back soon.</div>{% endfor %}</div>
+{{ m.pager(pg, 'jobs', category=cat) }}{% endblock %}

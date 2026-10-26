@@ -1,0 +1,8 @@
+{% extends "base.html" %}{% import '_m.html' as m with context %}{% block title %}Users{% endblock %}
+{% block content %}<h1>Users</h1>{% with active='users' %}{% include 'admin_nav.html' %}{% endwith %}
+<form class="searchbar mt" method="get"><div><label class="small" for="q">Search name or e-mail</label><input id="q" name="q" value="{{ term }}" maxlength="60"></div><span></span><button class="btn" type="submit">Search</button></form>
+<div class="tscroll mt"><table><thead><tr><th>Name</th><th>E-mail</th><th>Role</th><th>Verified</th><th>Active</th><th>Joined</th><th></th></tr></thead><tbody>
+{% for u in rows %}<tr><td>{{ u.full_name }}</td><td>{{ u.email }}</td><td>{{ u.role }}</td><td>{{ 'yes' if u.is_verified else 'no' }}</td><td>{{ 'yes' if u.is_active else 'suspended' }}</td><td>{{ u.created_at|day }}</td>
+<td>{% if u.id != me.id %}<form class="inline-form" method="post" action="{{ url_for('admin_user_action', uid=u.id, action='toggle') }}" data-confirm="{{ 'Suspend' if u.is_active else 'Re-activate' }} this account?">{{ m.csrf() }}<button class="btn sm ghost" type="submit">{{ 'Suspend' if u.is_active else 'Activate' }}</button></form>
+{% if not u.is_verified %}<form class="inline-form" method="post" action="{{ url_for('admin_user_action', uid=u.id, action='verify') }}">{{ m.csrf() }}<button class="btn sm" type="submit">Mark verified</button></form>{% endif %}{% endif %}</td></tr>{% endfor %}</tbody></table></div>
+{{ m.pager(pg, 'admin_users', q=term) }}{% endblock %}
